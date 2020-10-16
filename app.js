@@ -1,35 +1,24 @@
+//Server-ralative variables and inclusion
 const express = require('express')
 const app = express()
 const port = 3000
 
+//Middleware inclusion
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 
+//Routers
+const routes = require('./routes')
+
+//App template engines
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
-const users = require('./models/user.js')
+app.use(routes)
 
-app.get('/', (req, res) => {
-  res.render('login')
-})
-
-app.post('/', (req, res) => {
-  let input = { email: '', password: '' }
-  input = Object.assign(input, req.body)
-
-  const user = users.find((user) => user.email === input.email && user.password === input.password)
-
-  if (user) {
-    res.send(`<h1>Welcome Back, ${user.firstName}</h1>`)
-  } else {
-    const loginFail = 'foo'
-    res.render('login', { loginFail })
-  }
-})
-
+// Server listen message
 app.listen(port, () => {
   console.log(`Express server is running on http://localhost:${port}`)
 })
